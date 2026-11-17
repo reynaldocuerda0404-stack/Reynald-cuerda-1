@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reynaldo Cuerda — Portfolio</title>
+<style>
+  :root {
+    --bg: #f4f1ea;
+    --surface: #ffffff;
+    --ink: #1a1a1a;
+    --ink-soft: #5c5750;
+    --line: #e4ddd0;
+    --accent: #d99a1f;
+    --accent-ink: #1a1a1a;
+    --header-bg: #161412;
+    --header-ink: #f4f1ea;
+    --font-display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --font-body: 'Inter', 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    margin: 0;
+  }
+  h1, h2, h3 { font-family: var(--font-display); margin: 0; }
+  p { line-height: 1.6; color: var(--ink-soft); }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+
+  header.hero {
+    background: var(--header-bg) center / cover no-repeat;
+    color: var(--header-ink);
+    padding: 48px 20px 40px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+  }
+  header.hero.has-cover::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.45);
+  }
+  header.hero > * { position: relative; z-index: 1; }
+  header.hero .cover-hint {
+    position: absolute; top: 10px; right: 10px;
+    z-index: 2;
+    background: rgba(0,0,0,0.55); color: #fff;
+    font-size: 11px; font-weight: 600;
+    padding: 6px 10px; border-radius: 999px;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  header.hero:hover .cover-hint, header.hero:focus-within .cover-hint { opacity: 1; }
+  header.hero input[type="file"] { display: none; }
+  .avatar {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--accent), #8a5a10);
+    border: 3px solid var(--accent);
+    margin: 0 auto 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-size: 38px; font-weight: 700;
+    color: var(--accent-ink);
+    overflow: hidden;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .avatar { position: relative; cursor: pointer; }
+  .avatar .hint {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: rgba(0,0,0,0.55); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; text-align: center; padding: 8px;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .avatar:hover .hint, .avatar:focus-visible .hint { opacity: 1; }
+  .avatar input[type="file"] { display: none; }
+  header.hero h1 { font-size: clamp(28px, 5vw, 40px); letter-spacing: 1px; text-transform: uppercase; }
+  header.hero .role { color: var(--accent); font-weight: 600; margin-top: 10px; font-size: 16px; }
+
+  section { padding: 40px 0; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+  }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin-bottom: 10px; display: block;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .skill-btn {
+    font: inherit;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--header-ink);
+    background: var(--header-bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 14px;
+    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .skill-btn .icon { font-size: 24px; }
+  .skill-btn:hover, .skill-btn:focus-visible { border-color: var(--accent); transform: translateY(-2px); }
+  .skill-btn[aria-current="true"] { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  #portfolio { scroll-margin-top: 16px; }
+  .portfolio-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 24px; }
+  .tab {
+    font: inherit; font-size: 13px; font-weight: 600;
+    padding: 8px 14px; border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent; color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+  .sample {
+    aspect-ratio: 4 / 3;
+    border-radius: 10px;
+    border: 1px dashed var(--line);
+    background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; text-align: center; padding: 10px;
+    color: var(--ink-soft); font-size: 12px;
+    overflow: hidden;
+  }
+  .sample .glyph { font-size: 26px; }
+  .sample.video .glyph { color: var(--accent); }
+  .sample { position: relative; cursor: pointer; }
+  .sample input[type="file"] { display: none; }
+  .sample img, .sample video { width: 100%; height: 100%; object-fit: cover; border-radius: 9px; position: absolute; inset: 0; }
+  .sample .fill-hint {
+    position: absolute; inset: 0; border-radius: 9px;
+    background: rgba(0,0,0,0.55); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; text-align: center; padding: 6px;
+    opacity: 0; transition: opacity 0.15s ease;
+  }
+  .sample.has-media:hover .fill-hint, .sample.has-media:focus-visible .fill-hint { opacity: 1; }
+  .sample:not(.has-media):hover, .sample:not(.has-media):focus-visible { border-color: var(--accent); }
+
+  .contact-btn {
+    background: var(--accent); color: var(--accent-ink);
+    font-weight: 700; text-decoration: none;
+    padding: 14px 26px; border-radius: 10px; display: inline-block;
+  }
+  .share-btn {
+    font: inherit; font-weight: 700;
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--line);
+    padding: 12px 24px; border-radius: 10px;
+    cursor: pointer; margin-top: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .share-btn:hover, .share-btn:focus-visible { border-color: var(--accent); }
+  .share-btn.copied { border-color: var(--accent); color: var(--accent); }
+  footer { text-align: center; padding: 24px 0 40px; color: var(--ink-soft); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="hero" id="heroHeader" tabindex="0">
+  <span class="cover-hint">I-click para magpalit ng cover photo</span>
+  <input type="file" accept="image/*" id="coverInput">
+  <label class="avatar" id="avatarLabel" tabindex="0">
+    <img src="profile.jpg" alt="Reynaldo S. Cuerda" id="avatarImg">
+    <span class="hint">I-click para<br>magpalit ng larawan</span>
+    <input type="file" accept="image/*" id="avatarInput">
+  </label>
+  <h1>Reynaldo S. Cuerda</h1>
+  <p class="role">Multi-Skilled Worker &middot; Solaire</p>
+</header>
+
+<div class="wrap">
+
+  <section id="about">
+    <div class="card">
+      <span class="eyebrow">Sino Ako?</span>
+      <p>
+        Ako ay isang masipag at maaasahang manggagawa na may karanasan sa iba't ibang larangan ng construction at maintenance.
+        Sanay ako sa trabahong may kinalaman sa kuryente, kahoy, semento, at sa pag-aayos ng mga gamit.
+        Layunin ko na makapagbigay ng maayos, malinis, at ligtas na gawa sa bawat proyektong hahawakan ko.
+      </p>
+    </div>
+  </section>
+
+  <section id="skills">
+    <span class="eyebrow">Mga Skills Ko</span>
+    <h2>I-click para makita ang sample ng trabaho</h2>
+    <div class="skills-grid" id="skillButtons">
+      <button class="skill-btn" data-skill="electrician"><span class="icon">&#9889;</span>Electrician</button>
+      <button class="skill-btn" data-skill="carpenter"><span class="icon">&#128296;</span>Carpenter</button>
+      <button class="skill-btn" data-skill="mason"><span class="icon">&#129531;</span>Mason</button>
+      <button class="skill-btn" data-skill="technician"><span class="icon">&#128736;&#65039;</span>Technician</button>
+    </div>
+  </section>
+
+  <section id="portfolio">
+    <div class="card">
+      <span class="eyebrow" id="portfolioLabel">Portfolio — Electrician</span>
+      <h2 id="portfolioHeading">Mga Sample na Trabaho</h2>
+      <p>Larawan at video ng mga naunang ginawang proyekto.</p>
+
+      <div class="portfolio-tabs" id="portfolioTabs" role="tablist"></div>
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </section>
+
+  <section id="contact" style="text-align:center;">
+    <span class="eyebrow">Contactin Mo Ako</span>
+    <h2 style="margin-bottom:14px;">Kung kailangan mo ng gagawa</h2>
+    <p style="margin-bottom:18px;">I-click mo lang ang button para mag-email.</p>
+    <a class="contact-btn" href="mailto:reynaldocuerda0404@gmail.com">&#128231; reynaldocuerda0404@gmail.com</a>
+    <div>
+      <button class="share-btn" id="shareBtn" type="button">&#128279; Kopyahin ang Link ng Website</button>
+    </div>
+  </section>
+
+  <footer>&copy; 2026 Reynaldo S. Cuerda. All Rights Reserved.</footer>
+</div>
+
+<script>
+(function () {
+  // Click-to-upload avatar photo. Saved in this browser only (localStorage),
+  // so it's per-device/per-browser: uploading on one computer won't show on another.
+  var avatarImg = document.getElementById("avatarImg");
+  var avatarInput = document.getElementById("avatarInput");
+  var avatarLabel = document.getElementById("avatarLabel");
+
+  try {
+    var savedPhoto = localStorage.getItem("profile_photo_data_url");
+    if (savedPhoto) avatarImg.src = savedPhoto;
+  } catch (e) {}
+
+  if (avatarInput) {
+    avatarInput.addEventListener("change", function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        avatarImg.src = ev.target.result;
+        try { localStorage.setItem("profile_photo_data_url", ev.target.result); } catch (err) {}
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  if (avatarLabel) {
+    avatarLabel.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        avatarInput.click();
+      }
+    });
+    // Stop clicks on the avatar from also triggering the cover-photo upload underneath it.
+    avatarLabel.addEventListener("click", function (e) { e.stopPropagation(); });
+  }
+
+  // Click-to-upload cover photo for the header band. Saved in this browser only.
+  var heroHeader = document.getElementById("heroHeader");
+  var coverInput = document.getElementById("coverInput");
+
+  function applyCover(dataUrl) {
+    heroHeader.style.backgroundImage = "url('" + dataUrl + "')";
+    heroHeader.classList.add("has-cover");
+  }
+
+  try {
+    var savedCover = localStorage.getItem("cover_photo_data_url");
+    if (savedCover) applyCover(savedCover);
+  } catch (e) {}
+
+  if (heroHeader && coverInput) {
+    heroHeader.addEventListener("click", function () { coverInput.click(); });
+    heroHeader.addEventListener("keydown", function (e) {
+      if (e.target === heroHeader && (e.key === "Enter" || e.key === " ")) {
+        e.preventDefault();
+        coverInput.click();
+      }
+    });
+    coverInput.addEventListener("click", function (e) { e.stopPropagation(); });
+    coverInput.addEventListener("change", function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        applyCover(ev.target.result);
+        try { localStorage.setItem("cover_photo_data_url", ev.target.result); } catch (err) {
+          alert("Hindi na-save: masyadong malaki ang larawan. Subukan ng mas maliit na file.");
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Share / copy-link button. Gumagamit ng kasalukuyang address ng page sa browser.
+  // Kung binuksan mula sa file mismo (C:/... o file://...), hindi ito totoong
+  // shareable na link -- kailangan munang i-upload/i-host ang mga file na ito
+  // sa isang website (hal. GitHub Pages, Netlify, o sariling hosting) para may
+  // totoong link na mabubuksan ng ibang tao.
+  var shareBtn = document.getElementById("shareBtn");
+  if (shareBtn) {
+    shareBtn.addEventListener("click", function () {
+      var url = window.location.href;
+      function showCopied() {
+        var original = "\uD83D\uDD17 Kopyahin ang Link ng Website";
+        shareBtn.textContent = "\u2713 Nakopya na!";
+        shareBtn.classList.add("copied");
+        setTimeout(function () {
+          shareBtn.textContent = original;
+          shareBtn.classList.remove("copied");
+        }, 2000);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(showCopied, function () {
+          window.prompt("I-copy ang link:", url);
+        });
+      } else {
+        window.prompt("I-copy ang link:", url);
+      }
+    });
+  }
+
+  // Mga sample item bawat skill. Hindi mo na kailangan maglagay ng "src" dito --
+  // i-click lang sa page mismo ang kahon para mag-upload. Awtomatikong ma-save
+  // sa browser mo (localStorage), per-item.
+  var DATA = {
+    electrician: {
+      label: "Electrician",
+      items: [
+        { type: "photo", caption: "Wiring installation" },
+        { type: "photo", caption: "Panel board setup" },
+        { type: "video", caption: "Troubleshooting demo" }
+      ]
+    },
+    carpenter: {
+      label: "Carpenter",
+      items: [
+        { type: "photo", caption: "Cabinet build" },
+        { type: "photo", caption: "Door framing" },
+        { type: "video", caption: "Finishing work" }
+      ]
+    },
+    mason: {
+      label: "Mason",
+      items: [
+        { type: "photo", caption: "Wall tiling" },
+        { type: "photo", caption: "Concrete pour" },
+        { type: "video", caption: "Plastering process" }
+      ]
+    },
+    technician: {
+      label: "Technician",
+      items: [
+        { type: "photo", caption: "Equipment repair" },
+        { type: "photo", caption: "Maintenance check" },
+        { type: "video", caption: "Installation walkthrough" }
+      ]
+    }
+  };
+
+  var order = ["electrician", "carpenter", "mason", "technician"];
+  var buttons = document.querySelectorAll(".skill-btn");
+  var tabsWrap = document.getElementById("portfolioTabs");
+  var gallery = document.getElementById("gallery");
+  var label = document.getElementById("portfolioLabel");
+  var heading = document.getElementById("portfolioHeading");
+  var portfolioSection = document.getElementById("portfolio");
+
+  function renderTabs(active) {
+    tabsWrap.innerHTML = "";
+    order.forEach(function (key) {
+      var b = document.createElement("button");
+      b.className = "tab";
+      b.textContent = DATA[key].label;
+      b.setAttribute("role", "tab");
+      b.setAttribute("aria-selected", key === active ? "true" : "false");
+      b.addEventListener("click", function () { show(key, false); });
+      tabsWrap.appendChild(b);
+    });
+  }
+
+  function mediaKey(skillKey, idx) {
+    return "portfolio_media_" + skillKey + "_" + idx;
+  }
+
+  function renderGallery(key) {
+    gallery.innerHTML = "";
+    DATA[key].items.forEach(function (item, idx) {
+      var storageKey = mediaKey(key, idx);
+      var savedData = null;
+      try { savedData = localStorage.getItem(storageKey); } catch (e) {}
+
+      var label = document.createElement("label");
+      label.className = "sample" + (item.type === "video" ? " video" : "") + (savedData ? " has-media" : "");
+      label.tabIndex = 0;
+
+      var input = document.createElement("input");
+      input.type = "file";
+      input.accept = item.type === "video" ? "video/*" : "image/*";
+      input.addEventListener("change", function (e) {
+        var file = e.target.files && e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+          try {
+            localStorage.setItem(storageKey, ev.target.result);
+          } catch (err) {
+            alert("Hindi na-save: masyadong malaki ang file para sa browser storage. Subukan ng mas maliit o naka-compress na file.");
+            return;
+          }
+          renderGallery(key);
+        };
+        reader.readAsDataURL(file);
+      });
+      label.appendChild(input);
+
+      if (savedData) {
+        var mediaEl;
+        if (item.type === "video") {
+          mediaEl = document.createElement("video");
+          mediaEl.src = savedData;
+          mediaEl.controls = true;
+        } else {
+          mediaEl = document.createElement("img");
+          mediaEl.src = savedData;
+          mediaEl.alt = item.caption;
+        }
+        label.appendChild(mediaEl);
+        var hint = document.createElement("span");
+        hint.className = "fill-hint";
+        hint.innerHTML = "I-click para<br>palitan";
+        label.appendChild(hint);
+      } else {
+        var glyph = document.createElement("div");
+        glyph.className = "glyph";
+        glyph.textContent = item.type === "video" ? "▶" : "🖼";
+        var cap = document.createElement("div");
+        cap.textContent = item.caption;
+        var upload = document.createElement("div");
+        upload.style.fontSize = "10px";
+        upload.style.marginTop = "2px";
+        upload.textContent = "(i-click para mag-upload)";
+        label.appendChild(glyph);
+        label.appendChild(cap);
+        label.appendChild(upload);
+      }
+      gallery.appendChild(label);
+    });
+  }
+
+  function show(key, scroll) {
+    buttons.forEach(function (b) {
+      b.setAttribute("aria-current", b.dataset.skill === key ? "true" : "false");
+    });
+    label.textContent = "Portfolio — " + DATA[key].label;
+    heading.textContent = "Mga Sample na Trabaho (" + DATA[key].label + ")";
+    renderTabs(key);
+    renderGallery(key);
+    try { localStorage.setItem("portfolio_active_skill", key); } catch (e) {}
+    if (scroll) {
+      portfolioSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener("click", function () { show(b.dataset.skill, true); });
+  });
+
+  var saved = "electrician";
+  try {
+    var stored = localStorage.getItem("portfolio_active_skill");
+    if (stored && DATA[stored]) saved = stored;
+  } catch (e) {}
+  show(saved, false);
+})();
+</script>
+</body>
+</html>
